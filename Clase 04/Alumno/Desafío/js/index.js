@@ -1,12 +1,15 @@
+
 function buscarAlumnoPorNombre(nombreOApellido, listaAlumnos) {
   var nombreLower = nombreOApellido.toLowerCase();
   for (var i = 0; i < listaAlumnos.length; i++) {
     if (listaAlumnos[i].firstName.toLowerCase() === nombreLower) {
       return i
     }
+
   }
   return -1
 }
+
 
 function buscarAlumnoPorApellido(nombreOApellido, listaAlumnos) {
   var apellidoLower = nombreOApellido.toLowerCase();
@@ -14,9 +17,11 @@ function buscarAlumnoPorApellido(nombreOApellido, listaAlumnos) {
     if (listaAlumnos[i].lastName.toLowerCase() === apellidoLower) {
       return i
     }
+
   }
   return -1
 }
+
 
 function buscarAlumnoPorNombreYApellido(nombreOApellido, listaAlumnos) {
   var nombreLower = nombreOApellido.toLowerCase();
@@ -35,6 +40,7 @@ var listaAlumnos = [
   {
     firstName: 'a',
     lastName: 'a',
+
     dni: 45678987
   },
   {
@@ -53,6 +59,7 @@ var listaAlumnos = [
     dni: 45678983
   }
 ]
+
 var nombreOApellido = prompt('Ingrese nombre o apellido: ')
 var posicion = buscarAlumnoPorNombreYApellido(nombreOApellido, listaAlumnos);
 console.log(posicion)
