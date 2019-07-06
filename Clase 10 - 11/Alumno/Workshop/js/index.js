@@ -8,18 +8,32 @@ window.onload = function () {
   var dni = document.getElementById('dni')
   var addStudentButton = document.getElementById('addStudentButton')
   var mainList = document.getElementById('mainList')
+  var deleteDni = document.getElementById('deleteDni')
+  var deleteStudentButton = document.getElementById('deleteStudentButton')
+  var searchStudentButton = document.getElementById('searchStudentButton')
+  var searchText = document.getElementById('searchText')
+  var searchList = document.getElementById('searchList')
+
   // bind events validations
   firstName.onblur = validateNotEmpty
   lastName.onblur = validateNotEmpty
   email.onblur = validateEmail
   dni.onblur = validateDni
   addStudentButton.onclick = addStudent
+  deleteStudentButton.onclick = deleteStudent
+  searchStudentButton.onclick = searchStudent
+
   // initialize
   addStudentButton.disabled = true
   var dataStore = getDataStore(KEY_STORE)
   renderStudentsList(mainList, dataStore)
+
   // render functions
+
   function renderStudentsList(list, students) {
+    while (list.hasChildNodes()) {
+      list.removeChild(list.firstChild);
+    }
     for (var i = 0; i < students.length; i++) {
       console.log(students[i])
       list.appendChild(createStudentNode(students[i]))
@@ -27,6 +41,7 @@ window.onload = function () {
   }
   function createStudentNode(student) {
     var li = document.createElement('li')
+    li.id = student.dni
     li.className = 'list-group-item'
     var h1 = document.createElement('h1')
     h1.innerHTML = student.firstName + ' ' + student.lastName
@@ -39,6 +54,7 @@ window.onload = function () {
     li.appendChild(p)
     return li
   }
+
   function getDataStore(key) {
     var store = getLocalList(key)
     if (!store) {
@@ -48,6 +64,7 @@ window.onload = function () {
     }
     return []
   }
+
   // data manipulation
   function addStudent() {
     var student = getStudentFromForm()
@@ -58,12 +75,62 @@ window.onload = function () {
     mainList.appendChild(createStudentNode(student))
     addStudentButton.disabled = true
   }
+  function deleteStudent() {
+    // tomar el valor del input dniDelete
+    // ya está declarada y traida del DOM
+    var dniToBeDeleted = deleteDni.value
+    // buscar ese valor en el dataStore
+    if (removeStudentFromDatastore(dataStore, dniToBeDeleted)) {
+      // persistir dataStore en localStore 
+      setLocalList(KEY_STORE, dataStore)
+      // remover el student del dom
+      var liToBeRemoved = document.getElementById(dniToBeDeleted)
+      liToBeRemoved.remove()
+    }
+  }
+
+  function searchStudent() {
+    //necesito el texto del student que busco searchText.value
+    var textToBeSearched = searchText.value
+    var studentsWhoMatchSearch = []
+    // buscar en el dataStore los elementos que coincidan con la busqueda
+    for (var i = 0; i < dataStore.length; i++) {
+      var student = dataStore[i];
+      var isInFirstName = student.firstName.indexOf(textToBeSearched) > -1
+      var isInLastName = student.lastName.indexOf(textToBeSearched) > -1
+      var isEmail = student.email.indexOf(textToBeSearched) > -1
+      var isDni = student.dni.indexOf(textToBeSearched) > -1
+      if (isInFirstName || isInLastName || isEmail || isDni) {
+        studentsWhoMatchSearch.push(student)
+      }
+      renderStudentsList(searchList, studentsWhoMatchSearch)
+    }
+  }
+  // ya tengo los elementos que coinciden con la busqueda
+  // por cada elemento creo el li con createStudentNode
+  // appendeo con el elemento en searchList
+
+
+  function removeStudentFromDatastore(dataStore, dni) {
+    for (var i = 0; i < dataStore.length; i++) {
+      var student = dataStore[i];
+      if (student.dni === dni) {
+        dataStore.splice(i, 1);
+        return true
+      }
+    }
+    return false
+  }
+
+
+
   function clearStudentForm() {
     firstName.value = ''
     lastName.value = ''
     dni.value = ''
     email.value = ''
   }
+
   function getStudentFromForm() {
     return {
       firstName: firstName.value,
@@ -72,7 +139,9 @@ window.onload = function () {
       email: email.value,
     }
   }
+
   // localStorage functions
+
   function setLocalList(key, array) {
     var valorKey = typeof key === 'string'
     var valorArray = Array.isArray(array)
@@ -83,6 +152,7 @@ window.onload = function () {
     localStorage.setItem(key, arrayStr)
     return true
   }
+
   function getLocalList(key) {
     var nombreKey = typeof key === 'string'
     if (!nombreKey) {
@@ -99,6 +169,8 @@ window.onload = function () {
     }
     return false
   }
+
+
   // validations
   function allValidationsOk() {
     var allValids = document.getElementsByClassName('is-valid')
@@ -114,6 +186,7 @@ window.onload = function () {
     }
     return false
   }
+
   function validateDni(event) {
     var inputNode = event.target
     var value = event.target.value
@@ -128,6 +201,7 @@ window.onload = function () {
     }
     allValidationsOk()
   }
+
   function validateEmail(event) {
     var inputNode = event.target
     var value = event.target.value
@@ -140,6 +214,7 @@ window.onload = function () {
     }
     allValidationsOk()
   }
+
   function validateNotEmpty(event) {
     var inputNode = event.target
     var value = inputNode.value
@@ -152,10 +227,12 @@ window.onload = function () {
     }
     allValidationsOk()
   }
+
   function stringIsNotEmpty(string) {
     if (string.length > 0) {
       return true
     }
     return false
   }
+
 }
