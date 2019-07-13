@@ -10,7 +10,7 @@ $(document).ready(function () {
   //implementar la funcion removeElementWithAnimation(id) donde la funcion recibe el id del elemento a eliminar
 
   function removeElementWithAnimation(id) {
-    $('#' + id).fadeOut(3000, function () {
+    $('#' + id).fadeOut(1000, function () {
       //obtener el elemento usando selector de jquery con el id provisto en la funcion usando kquery fadeOut or slideUp, remover el elemento
       $(`#${id}`).remove()
     })
