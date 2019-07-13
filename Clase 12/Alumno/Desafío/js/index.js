@@ -1,5 +1,6 @@
 $(document).ready(function () {
-  $('#email').blur(handleInput)
+  var email = $('#email')
+  email.blur(handleInput)
 });
 
 function handleInput(event) {
