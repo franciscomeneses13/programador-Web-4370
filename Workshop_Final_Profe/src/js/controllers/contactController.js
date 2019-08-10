@@ -1,5 +1,5 @@
 function contactController() {
-  $('#root').load('./partials/home.html')
+  $('#root').load('./partials/contact.html')
   console.log('Se cargo la home')
 }
 
